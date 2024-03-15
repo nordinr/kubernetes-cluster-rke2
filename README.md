@@ -552,7 +552,7 @@ nfs install successfully
 
 3. Run the following command to ensure that the nodes have all the necessary to install longhorn:
 
-   ```bash
+```bash
 curl -sSfL https://raw.githubusercontent.com/longhorn/longhorn/v1.4.1/scripts/environment_check.sh | bash
 ```
 
