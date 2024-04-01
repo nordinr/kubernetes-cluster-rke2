@@ -1,5 +1,5 @@
 # Use the official WordPress image as the base image
-FROM wordpress:6.4.2-php8.1-apache
+FROM wordpress:6.4.3-php8.3-apache
 
 # Add any additional customization or configurations here
 
