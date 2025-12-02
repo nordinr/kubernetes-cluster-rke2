@@ -36,6 +36,28 @@ This guide was modified based on https://github.com/sifulan-access-federation/if
 
 In this tutorial, we are going to setup a Kubernetes cluster by using the [Rancher Kubernetes Engine 2 (RKE2)](https://rke2.io). RKE2 is a CNCF-certified Kubernetes distribution that that focuses on security and compliance within the U.S. Federal Government sector. It solves the common frustration of installation complexity with Kubernetes by removing most host dependencies and presenting a stable path for deployment, upgrades, and rollbacks. Before we start, make sure you have the following pre-flight checklist ready.
 
+## One-file automation
+
+To simplify reusing these instructions in other environments, the repository now includes a `setup-rke2.sh` helper that bundles the node preparation and RKE2 installation steps. Edit the variables at the top of the script (or export them before execution) to match your hosts, then run it as `root` on each node:
+
+```bash
+# login node tooling only
+NODE_TYPE=login bash setup-rke2.sh
+
+# first control-plane node
+NODE_TYPE=server-init TLS_SANS="cp1.example.com,cp2.example.com,cp3.example.com" NODE_FQDN=cp1.example.com \
+  bash setup-rke2.sh
+
+# additional control-plane node
+NODE_TYPE=server-join PRIMARY_SERVER_URL=https://cp1.example.com:9345 NODE_TOKEN=<node-token> \ 
+  TLS_SANS="cp1.example.com,cp2.example.com,cp3.example.com" NODE_FQDN=cp2.example.com bash setup-rke2.sh
+
+# worker node
+NODE_TYPE=agent PRIMARY_SERVER_URL=https://cp1.example.com:9345 NODE_TOKEN=<node-token> bash setup-rke2.sh
+```
+
+The script applies the network prerequisites (swap disable, bridge modules, UFW disable on Ubuntu), installs the required binaries, writes `/etc/rancher/rke2/config.yaml`, and enables the appropriate systemd service for the selected role.
+
 ## Pre-flight checklist
 
 Please refer to the KubernetesCluster.pdf file for pre-flight checklist.
